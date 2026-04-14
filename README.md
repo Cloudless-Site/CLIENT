@@ -113,9 +113,20 @@ Cloudless supports different protocols. Use the right tunnel mode for your needs
 For web servers. Tunnels become **ACTIVE** immediately upon connection.
 
 -   **Recommended HTTPS example (`up@`)**:
-    **SNI-based routing.** Cloudless uses SNI to route HTTPS traffic. Depending on backend detection and routing mode, Cloudless may operate in passthrough or proxy mode, so end-to-end TLS is not guaranteed in every case.
-    ```bash
-    ssh -R myapp.cloudless.site:443:localhost:8443 up@cloudless.site
+    **SNI-based routing.** Cloudless uses SNI to route HTTPS traffic.
+
+    Cloudless operates in two distinct modes:
+
+    1. **Gadget / Cloudless domain mode (`*.cloudless.site`)**
+       - TLS is terminated by Cloudless
+       - Cloudless presents its own certificate
+       - Host header is rewritten toward the backend
+
+    2. **Custom domain mode (BYOD)**
+       - TLS is NOT terminated by Cloudless
+       - Traffic is passed through end-to-end
+
+    This behavior is deterministic and does not depend on runtime detection.
     ```
 
 -   **HTTP example (`up@`)**:
@@ -151,7 +162,16 @@ Notes:
 - `activate@` also starts a live "watch" stream. Keep it open in a terminal.
 - Activation is tied to the requesting fingerprint and is associated with the client IP that triggered the activation; it is not a static global allowlist.
 - If you disconnect the original tunnel, the service disappears (and traffic stops).
-- If activation fails, it is typically because your IP already has an activator binding collision for one of the public ports.
+
+### Activation Model
+
+- Each public port can be associated with a single active consumer at a time.
+- Activation is tied to the requesting fingerprint and the client IP that triggered it.
+- If multiple activation attempts occur:
+  - the latest successful activation overrides the previous one
+  - previous consumers are implicitly detached
+
+This behavior is deterministic and intentional.
 
 ```bash
 # Connect to the service
@@ -265,7 +285,9 @@ Notes:
 Additional constraints (current build):
 - `protect@` requires that the domain exists in the DB and is owned by your SSH key.
 - `protect@` **overwrites** the current active script for that domain (same mechanism as `put@`), so treat it as "apply a generated script now".
-- Basic Auth mode checks only **ingress HTTP request headers** (best-effort) and injects a 401 response if missing/invalid.
+- Basic Auth credentials are embedded into the generated script.
+- This feature is intended for development and quick protection only.
+- **Do not use `protect@` as a production authentication system.**
 - IP allow mode uses connection metadata (`meta.client_ip`) and will reject connections not matching the configured IP.
 - Basic Auth credentials are embedded into the generated script (good for dev/demo; don't treat it as a vault).
 - The script is stored server-side and applied at the edge (same mechanism as `put@`/`get@`).
