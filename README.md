@@ -81,8 +81,6 @@ Use one of these when you want the shortest useful path instead of a pilgrimage.
 - Stable HTTPS demo: `ssh -R myapp.cloudless.site:443:localhost:8443 up@cloudless.site`
 - Controlled TCP demo: `ssh -R tcp:10000:localhost:22 tunnel@cloudless.site` then `ssh activate@cloudless.site` from the consumer machine
 
-For a broader product walkthrough see [`../00-overview/DEMO.md`](../00-overview/DEMO.md).
-
 ---
 
 ## 🧩 Gadget Domains: The "Instant" Way

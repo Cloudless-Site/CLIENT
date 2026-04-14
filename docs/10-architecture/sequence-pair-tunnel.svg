@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760">
+  <rect width="1280" height="760" fill="#fff"/>
+  <text x="60" y="56" font-family="Arial" font-size="30" font-weight="700">Cloudless Pair + Tunnel Sequence</text>
+  <text x="60" y="90" font-family="Arial" font-size="16" fill="#444">Typical owner publication flow followed by consumer pair activation</text>
+  <g font-family="Arial" font-size="20" font-weight="700">
+    <text x="90" y="150">Owner</text>
+    <text x="300" y="150">Control Plane</text>
+    <text x="550" y="150">Store</text>
+    <text x="780" y="150">Pair System</text>
+    <text x="1040" y="150">Consumer</text>
+  </g>
+  <g stroke="#666" stroke-width="2" stroke-dasharray="6 6">
+    <line x1="120" y1="170" x2="120" y2="700"/>
+    <line x1="380" y1="170" x2="380" y2="700"/>
+    <line x1="610" y1="170" x2="610" y2="700"/>
+    <line x1="860" y1="170" x2="860" y2="700"/>
+    <line x1="1090" y1="170" x2="1090" y2="700"/>
+  </g>
+  <g font-family="Arial" font-size="16">
+    <line x1="120" y1="210" x2="380" y2="210" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="165" y="200">1. up@ / tunnel@ request</text>
+    <line x1="380" y1="255" x2="610" y2="255" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="430" y="245">2. persist service / metadata</text>
+    <line x1="610" y1="300" x2="380" y2="300" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="422" y="290">3. state confirmed</text>
+    <line x1="380" y1="345" x2="860" y2="345" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="505" y="335">4. create pair code / pair session capability</text>
+    <line x1="860" y1="390" x2="380" y2="390" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="510" y="380">5. pair code / link returned</text>
+    <line x1="380" y1="435" x2="120" y2="435" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="170" y="425">6. banner shows pair URL</text>
+    <line x1="120" y1="480" x2="1090" y2="480" stroke="#9b9b9b" stroke-width="2" stroke-dasharray="4 4"/>
+    <text x="70" y="470" fill="#666">Later...</text>
+    <line x1="1090" y1="525" x2="860" y2="525" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="895" y="515">7. open pair URL</text>
+    <line x1="860" y1="570" x2="380" y2="570" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="522" y="560">8. validate code, bind activator</text>
+    <line x1="380" y1="615" x2="610" y2="615" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="420" y="605">9. optional state update / accounting</text>
+    <line x1="380" y1="660" x2="1090" y2="660" stroke="#222" stroke-width="3" marker-end="url(#a)"/>
+    <text x="600" y="650">10. render active pair session / allow traffic</text>
+  </g>
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#222"/>
+    </marker>
+  </defs>
+</svg>

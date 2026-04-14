@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#fff"/>
+  <text x="60" y="58" font-family="Arial" font-size="30" font-weight="700">Cloudless Dataplane Design</text>
+  <text x="60" y="92" font-family="Arial" font-size="16" fill="#444">Accept path, worker model and traffic forwarding layout</text>
+  <rect x="70" y="150" width="220" height="100" rx="18" fill="#eef4ff" stroke="#4b76d1" stroke-width="2"/>
+  <text x="180" y="195" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Listeners</text>
+  <text x="180" y="225" text-anchor="middle" font-family="Arial" font-size="16">HTTP / HTTPS / TCP / UDP</text>
+  <rect x="370" y="150" width="220" height="100" rx="18" fill="#fef7ea" stroke="#d9a13f" stroke-width="2"/>
+  <text x="480" y="195" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Accept Path</text>
+  <text x="480" y="225" text-anchor="middle" font-family="Arial" font-size="16">queueing, handoff, worker selection</text>
+  <rect x="670" y="130" width="460" height="160" rx="24" fill="#eef9f6" stroke="#1d8c74" stroke-width="3"/>
+  <text x="900" y="175" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700">Worker Pool</text>
+  <text x="760" y="215" font-family="Arial" font-size="18">• epoll wait loops</text>
+  <text x="760" y="245" font-family="Arial" font-size="18">• per-worker connection handling</text>
+  <text x="760" y="275" font-family="Arial" font-size="18">• reduced cross-thread coordination</text>
+  <rect x="140" y="390" width="260" height="120" rx="18" fill="#fff4f4" stroke="#d15b5b" stroke-width="2"/>
+  <text x="270" y="435" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">TCP Path</text>
+  <text x="270" y="465" text-anchor="middle" font-family="Arial" font-size="16">buffers, conn state, bridge, forwarding</text>
+  <rect x="470" y="390" width="260" height="120" rx="18" fill="#f4f0ff" stroke="#7b58c8" stroke-width="2"/>
+  <text x="600" y="435" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">UDP Path</text>
+  <text x="600" y="465" text-anchor="middle" font-family="Arial" font-size="16">flows, tx queues, backpressure policy</text>
+  <rect x="800" y="390" width="260" height="120" rx="18" fill="#eefbee" stroke="#3d9a4e" stroke-width="2"/>
+  <text x="930" y="435" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Flow Tables</text>
+  <text x="930" y="465" text-anchor="middle" font-family="Arial" font-size="16">lookup, lifecycle, activity tracking</text>
+  <rect x="370" y="600" width="460" height="100" rx="18" fill="#f5f7fb" stroke="#2d3f5f" stroke-width="2"/>
+  <text x="600" y="640" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Public Endpoints</text>
+  <text x="600" y="670" text-anchor="middle" font-family="Arial" font-size="16">traffic exits toward published services and consumers</text>
+  <line x1="290" y1="200" x2="370" y2="200" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="590" y1="200" x2="670" y2="200" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="900" y1="290" x2="900" y2="390" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="840" y1="290" x2="600" y2="390" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="760" y1="290" x2="270" y2="390" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="270" y1="510" x2="520" y2="600" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="600" y1="510" x2="600" y2="600" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="930" y1="510" x2="680" y2="600" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="322" y="188" font-family="Arial" font-size="15" fill="#444">accept</text>
+  <text x="618" y="188" font-family="Arial" font-size="15" fill="#444">dispatch</text>
+  <text x="913" y="347" font-family="Arial" font-size="15" fill="#444">state</text>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+  </defs>
+</svg>

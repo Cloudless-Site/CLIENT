@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#0f172a"/>
+<text x="600" y="44" font-family="Arial,Helvetica,sans-serif" font-size="28" text-anchor="middle" fill="#e2e8f0">Cloudless Architecture</text>
+<rect x="90" y="110" width="240" height="120" rx="16" fill="#1d4ed8"/>
+<text x="210" y="156" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" fill="#f8fafc">CLI / SSH</text>
+<text x="210" y="188" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#dbeafe">register@ verify@ up@ tunnel@</text>
+<rect x="90" y="300" width="240" height="120" rx="16" fill="#7c3aed"/>
+<text x="210" y="346" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" fill="#f8fafc">Dashboard</text>
+<text x="210" y="378" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#ede9fe">HTTP API / WebSocket / UI</text>
+<rect x="430" y="205" width="320" height="140" rx="16" fill="#0f766e"/>
+<text x="590" y="255" font-family="Arial,Helvetica,sans-serif" font-size="26" text-anchor="middle" fill="#f0fdfa">Control Plane + Core</text>
+<text x="590" y="289" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#ccfbf1">auth, cmd_user, cmd_admin, tunnel_req</text>
+<rect x="840" y="100" width="260" height="120" rx="16" fill="#be185d"/>
+<text x="970" y="148" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" fill="#fff1f2">Store</text>
+<text x="970" y="180" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#ffe4e6">SQLite users domains ACL policies</text>
+<rect x="840" y="280" width="260" height="120" rx="16" fill="#b45309"/>
+<text x="970" y="328" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" fill="#fffbeb">Pair</text>
+<text x="970" y="360" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#fef3c7">codes sessions activator binding</text>
+<rect x="430" y="470" width="320" height="140" rx="16" fill="#15803d"/>
+<text x="590" y="520" font-family="Arial,Helvetica,sans-serif" font-size="26" text-anchor="middle" fill="#f0fdf4">Dataplane</text>
+<text x="590" y="554" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#dcfce7">listeners TCP UDP bridge workers</text>
+<rect x="840" y="500" width="260" height="120" rx="16" fill="#334155"/>
+<text x="970" y="548" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" fill="#f8fafc">Endpoints</text>
+<text x="970" y="580" font-family="Arial,Helvetica,sans-serif" font-size="18" text-anchor="middle" fill="#cbd5e1">HTTP HTTPS TCP UDP</text>
+<line x1="330" y1="170" x2="430" y2="240" stroke="#93c5fd" stroke-width="6"/>
+<line x1="330" y1="360" x2="430" y2="300" stroke="#c4b5fd" stroke-width="6"/>
+<line x1="750" y1="250" x2="840" y2="160" stroke="#fda4af" stroke-width="6"/>
+<line x1="750" y1="290" x2="840" y2="340" stroke="#fde68a" stroke-width="6"/>
+<line x1="590" y1="345" x2="590" y2="470" stroke="#86efac" stroke-width="6"/>
+<line x1="750" y1="540" x2="840" y2="560" stroke="#cbd5e1" stroke-width="6"/>
+<text x="600" y="690" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" fill="#e2e8f0">Canonical model: session → service → endpoint</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="60" y="60" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Cloudless Architecture Overview</text>
+  <text x="60" y="95" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#444">Control plane, dashboard, store, pair subsystem and dataplane at a glance</text>
+  <rect x="80" y="160" width="220" height="90" rx="18" fill="#eef4ff" stroke="#4b76d1" stroke-width="2"/>
+  <text x="190" y="195" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">CLI / SSH</text>
+  <text x="190" y="222" text-anchor="middle" font-family="Arial" font-size="16">register@, up@, tunnel@</text>
+
+  <rect x="80" y="300" width="220" height="90" rx="18" fill="#eef4ff" stroke="#4b76d1" stroke-width="2"/>
+  <text x="190" y="338" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">Dashboard</text>
+  <text x="190" y="365" text-anchor="middle" font-family="Arial" font-size="16">Node.js UI + WebSocket</text>
+
+  <rect x="390" y="220" width="320" height="150" rx="22" fill="#f5f7fb" stroke="#2d3f5f" stroke-width="3"/>
+  <text x="550" y="265" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700">Control Plane</text>
+  <text x="550" y="300" text-anchor="middle" font-family="Arial" font-size="18">auth, commands, lifecycle, ACL, pair hooks</text>
+  <text x="550" y="330" text-anchor="middle" font-family="Arial" font-size="18">IPC gateway into core state transitions</text>
+
+  <rect x="790" y="120" width="280" height="100" rx="18" fill="#fdf4e7" stroke="#d28a28" stroke-width="2"/>
+  <text x="930" y="160" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Store</text>
+  <text x="930" y="190" text-anchor="middle" font-family="Arial" font-size="16">SQLite: users, domains, ACL, policy</text>
+
+  <rect x="790" y="260" width="280" height="100" rx="18" fill="#eefbee" stroke="#3d9a4e" stroke-width="2"/>
+  <text x="930" y="300" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Pair System</text>
+  <text x="930" y="330" text-anchor="middle" font-family="Arial" font-size="16">pair code, activation, session binding</text>
+
+  <rect x="390" y="460" width="320" height="140" rx="22" fill="#eef9f6" stroke="#1d8c74" stroke-width="3"/>
+  <text x="550" y="505" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700">Dataplane</text>
+  <text x="550" y="540" text-anchor="middle" font-family="Arial" font-size="18">TCP workers, UDP workers, epoll, flows</text>
+  <text x="550" y="570" text-anchor="middle" font-family="Arial" font-size="18">bridging and endpoint forwarding</text>
+
+  <rect x="790" y="470" width="280" height="120" rx="18" fill="#fff4f4" stroke="#d15b5b" stroke-width="2"/>
+  <text x="930" y="510" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Endpoints</text>
+  <text x="930" y="540" text-anchor="middle" font-family="Arial" font-size="16">HTTP, HTTPS, TCP, UDP</text>
+  <text x="930" y="565" text-anchor="middle" font-family="Arial" font-size="16">public binds and exposed services</text>
+
+  <line x1="300" y1="205" x2="390" y2="255" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="300" y1="345" x2="390" y2="320" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="710" y1="260" x2="790" y2="170" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="710" y1="300" x2="790" y2="310" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="550" y1="370" x2="550" y2="460" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="710" y1="530" x2="790" y2="530" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="332" y="275" font-family="Arial" font-size="15" fill="#444">SSH control</text>
+  <text x="330" y="340" font-family="Arial" font-size="15" fill="#444">HTTP / WS + IPC</text>
+  <text x="734" y="205" font-family="Arial" font-size="15" fill="#444">state</text>
+  <text x="730" y="293" font-family="Arial" font-size="15" fill="#444">activation</text>
+  <text x="565" y="422" font-family="Arial" font-size="15" fill="#444">service publication</text>
+  <text x="736" y="518" font-family="Arial" font-size="15" fill="#444">traffic</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+  </defs>
+</svg>
