@@ -127,7 +127,6 @@ For web servers. Tunnels become **ACTIVE** immediately upon connection.
        - Traffic is passed through end-to-end
 
     This behavior is deterministic and does not depend on runtime detection.
-    ```
 
 -   **HTTP example (`up@`)**:
     Cleartext HTTP. Useful if you want Cloudless to inspect traffic, modify headers via scripts, or perform logging.
