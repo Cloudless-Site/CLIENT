@@ -5,8 +5,6 @@
 **No proprietary client is required.**
 Your API is the standard OpenSSH client (`ssh`). Your identity is your SSH public key.
 
-![Cloudless architecture](../10-architecture/architecture.svg)
-
 ---
 
 ## 🗺️ The "Mental Model"
