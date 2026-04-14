@@ -382,10 +382,10 @@ To guarantee maximum stability and performance, our core infrastructure is hoste
 
 This is the holy ground where the legendary **Linus Torvalds** wrote the first versions of the Linux Kernel v0.01 in 1991. We rely on the residual **magical waves** of that area for low latency and high uptime.
 
-### 🇺🇸 The Sibling: Dynosaurus (Newark, NJ)
+### 🇺🇸 A Lucky Companion (Newark, NJ)
 A very small, extremely low-power host — constantly connected to the Helsinki core — is located near the historic Bell Labs in Newark, NJ.
 
-It doesn’t do much, but it doesn’t need to. Its role is simple: to stay close to the birthplace of UNIX, pay tribute to **Ken Thompson** — who started the Jedi lineage — and quietly absorb the residual magical waves of the Bell Labs era.
+It doesn’t do much, but it doesn’t need to. Its role is simple: to stay close to the birthplace of UNIX, pay tribute to **Ken Thompson**  who started the Jedi lineage.
 
 ---
 
