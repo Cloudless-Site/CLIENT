@@ -50,7 +50,7 @@ Important constants from the current sources:
 - expansion radius around each newly alive host: `4`
 - default global pacing: `10000` microseconds
 - default global burst max: `128`
-- default global epoll max: `64`
+- default global epoll max: `64` 
 - default service budget constant: `120000` ms
 
 The host and service caps are hard limits in the current implementation.
