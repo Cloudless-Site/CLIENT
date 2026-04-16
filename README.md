@@ -2,6 +2,9 @@
 
 Expose your local services to the internet using SSH — with zero ambiguity.
 
+🎥 **Architecture Deep Dive (real internals, no fluff)**
+[![Watch Architecture Video](docs/img/architecture-video-thumb.png)](docs/video/cloudless-architecture.mp4)
+
 ## What is Cloudless
 
 Cloudless is a high-performance tunneling system that lets you publish services with a simple SSH command.
@@ -77,12 +80,12 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 | No post-create mutation | ✅ | often dynamic |
 | Clear proxy vs passthrough model | ✅ | often blurred |
 
-## 📚 Documentation
+## Documentation 📚
 
 - 📖 [How Cloudless Works](docs/HOW-CLOUDLESS-WORKS.md)
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
-- 📘 [User manual](docs/README-USER.md)
-- 🔎 [Scoutless documentation](docs/SCOUTLESS.md)
+- 📘 [User Manual](docs/README-USER.md)
+- 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
 
 ## Clients
 
