@@ -77,7 +77,7 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 | No post-create mutation | ✅ | often dynamic |
 | Clear proxy vs passthrough model | ✅ | often blurred |
 
-## How it works
+## Documentation
 
 - [How Cloudless Works](docs/HOW-CLOUDLESS-WORKS.md)
 - [User manual](docs/README-USER.md)
