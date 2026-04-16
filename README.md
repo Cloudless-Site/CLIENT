@@ -80,7 +80,7 @@ Now browse:
 
 Use one of these when you want the shortest useful path instead of a pilgrimage.
 
-- Instant web demo: `ssh -R :80:localhost:3000 up@cloudless.site`
+- Instant web demo: `ssh -R :443:localhost:443 up@cloudless.site`
 - Stable HTTPS demo: `ssh -R myapp.cloudless.site:443:localhost:8443 tunnel@cloudless.site`
 - Controlled TCP demo: `ssh -R tcp:10000:localhost:22 tunnel@cloudless.site` then `ssh activate@cloudless.site` from the consumer machine
 
@@ -97,12 +97,12 @@ Simply leave the bind token empty (start with a colon `:`) or use a public gadge
 
 ```bash
 # Syntax: ssh -R :<remote_port>:<local_host>:<local_port> ...
-ssh -R :80:localhost:3000 up@cloudless.site
+ssh -R :443:localhost:3000 up@cloudless.site
 ```
 
 **Output:**
 ```text
-Tunnel Ready: g-x9y2z.cloudless.site -> port 80 (ACTIVE)
+Tunnel Ready: g-x9y2z.cloudless.site -> port 443 (ACTIVE)
 ```
 
 **Perfect for:** Webhooks, quick demos, and temporary file sharing.
@@ -124,7 +124,7 @@ For web servers exposed through a Cloudless HTTPS endpoint. Tunnels become **ACT
 
 Examples:
 ```bash
-ssh -R :80:localhost:3000 up@cloudless.site
+ssh -R :443:localhost:3000 up@cloudless.site
 ssh -R https:443:localhost:8443 up@cloudless.site
 ```
 
@@ -453,7 +453,7 @@ It doesn’t do much, but it doesn’t need to. Its role is simple: to stay clos
 
 | SSH Username | Usage | Description |
 | :--- | :--- | :--- |
-| `up@` | `ssh -R https:443:local:port up@cloudless.site` or `ssh -R :80:local:port up@cloudless.site` | HTTPS gadget publishing mode. Empty token or `https` creates a Cloudless gadget host. Public web exposure stays HTTPS on the Cloudless side; backend HTTP/HTTPS is decided by hints or backend probe. |
+| `up@` | `ssh -R https:443:local:port up@cloudless.site` or `ssh -R :443:local:port up@cloudless.site` | HTTPS gadget publishing mode. Empty token or `https` creates a Cloudless gadget host. Public web exposure stays HTTPS on the Cloudless side; backend HTTP/HTTPS is decided by hints or backend probe. |
 | `tunnel@` | `ssh -R tcp:10000:local:22 tunnel@cloudless.site` | Mixed tunnel mode. Use bind token `tcp` or `udp` for raw transport, a registered Cloudless hostname for HTTPS proxy mode, or a full custom domain for HTTPS passthrough mode. Consumer access still requires `activate@` where applicable. |
 
 ### Notes on Command Arguments
@@ -466,46 +466,3 @@ It doesn’t do much, but it doesn’t need to. Its role is simple: to stay clos
 ---
 
 *Cloudless is a "Hard Rock" service. We provide the raw power; you play the instruments.*
-
----
-
-## 📊 Pairing Flow Diagram
-
-```mermaid
-sequenceDiagram
-  participant App
-  participant Server
-  participant Device
-  App->>Server: request pairing code
-  Server-->>App: pairing code
-  Device->>Server: submit pairing code
-  Server->>Server: validate and bind identity
-  Server-->>App: paired session visible
-```
-```
-
-## 🖥️ Dashboard User Surface Summary
-
-The dashboard user area is the visual counterpart of the SSH user commands.
-
-It covers the same core operations:
-
-- inspect active sessions
-- list owned domains
-- verify domain status
-- release domains
-- inspect service metadata
-- access public download links for Kite bundles
-
-The dashboard does not become a second control plane.
-It remains a presentation layer over IPC commands and runtime state.
-
-## Comandi interni
-
-Alcuni comandi del protocollo Cloudless sono utilizzati esclusivamente
-dalle applicazioni ufficiali e non sono disponibili per uso diretto.
-
-Questi comandi non sono documentati nella guida utente.
-
-## Why Cloudless
-For the architectural pitch instead of the quickstart, read [`../00-overview/WHY-CLOUDLESS.md`](../00-overview/WHY-CLOUDLESS.md).
