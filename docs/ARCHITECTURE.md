@@ -1,252 +1,254 @@
-# Cloudless Architecture
+# 🏗️ Cloudless Architecture
 
-Cloudless is organized as a layered system with one canonical runtime model:
+## 🎯 Purpose
 
-session -> service -> endpoint
+This document describes the architectural model of Cloudless for a technical reader who wants to understand the system without reading the source code.
 
-A session represents an authenticated control connection.
-A service represents one exposed local resource created by that session.
-An endpoint is the public reachability derived from the service: HTTP or HTTPS domain, TCP port, or UDP port.
+For the runtime flow see [How Cloudless Works](../00-overview/HOW-CLOUDLESS-WORKS.md).
+For commands and real usage see the [User manual](../70-readmes/README-USER.md).
 
-This separation is one of the core design strengths of the project:
-- a session may own many services
-- a service may change transport state without changing logical identity
-- policy is enforced around the service model instead of being scattered only at socket level
+## 🚀 System Overview
 
-## Design goals
+Cloudless is an SSH-driven exposure engine.
 
-Cloudless is built around a few stable goals:
-- simple control semantics
-- strict separation between control and traffic handling
-- explicit service lifecycle management
-- lightweight deployment and operation
+Its job is to turn a tunnel request into a public network endpoint with deterministic behavior.
 
-The result is not just a tunnel helper.
-It is closer to a compact service exposure platform with its own control plane, dataplane and persistence model.
+The architecture is built around a strict separation between:
+- **Control plane** → receives intent
+- **Resolution layer** → decides exposure behavior
+- **Data plane** → executes traffic forwarding
 
-## Layers
+This split is the core reason the system stays predictable.
 
-### Control Plane
+## 🔌 Control Plane
 
-Main responsibility: mutate runtime state.
+Everything starts from an SSH connection.
 
-Key pieces:
-- SSH command handling in `src/control/`
-- IPC command handling in `src/common/ipc_server.c`
-- user and admin verbs in `cmd_user.c` and `cmd_admin.c`
-- pair and tunnel lifecycle in `tunnel_req.c`
+The SSH username selects the operation model.
+Examples include registration commands, inspection commands, and tunnel creation commands such as `up@` and `tunnel@`.
 
-What it does:
-- authenticate users
-- create and destroy services
-- register and verify domains
-- apply ACL and policy decisions
-- expose runtime state to dashboard and CLI
+The control plane carries:
+- the requested operation
+- the public bind token
+- the public port
+- the backend address carried by the reverse tunnel request
+- optional hints that refine HTTP or HTTPS backend behavior
 
-What it must not do:
-- move packets in the hot path
-- bypass the canonical service model
+### Architectural principle
 
-### Dataplane
+SSH is not only authentication and transport.
+It is also the control API.
 
-Main responsibility: move traffic fast.
+This removes the need for a separate web API for the core workflow and keeps the external interface small.
 
-Key pieces:
-- listeners in `src/dataplane/listeners/`
-- TCP workers in `src/dataplane/tcp/`
-- UDP workers in `src/dataplane/udp/`
-- lightweight protocol sniffing in `src/dataplane/protocols/`
+## 🧠 Resolution Layer
 
-What it does:
-- accept inbound traffic
-- route packets and streams to live services
-- keep runtime flow state
-- avoid policy lookups in the hot path
+After parsing, Cloudless resolves the request into a runtime binding.
 
-What it must not do:
-- talk to SQLite
-- become a second control plane
+Conceptually:
 
-The dataplane is intentionally isolated from the control plane so that traffic handling remains fast and predictable.
+```text
+input → interpretation → binding → exposure
+```
 
-### Core Model
+The resolution layer decides:
+- what kind of public endpoint is being requested
+- whether the endpoint is proxy or passthrough
+- how the public identity maps to the backend
+- which protocol-specific behavior is legal for that endpoint
 
-Main responsibility: hold runtime entities and contracts.
+### Important invariant
 
-Key pieces:
-- `src/core/`
-- `include/core/`
+The public side and the backend side are deliberately decoupled.
 
-What it does:
-- represent sessions and services
-- maintain ownership and references
-- define state used by control plane and dataplane
+The public bind token defines the public identity and public behavior.
+It does not blindly define backend semantics.
 
-### Store
+That separation prevents ambiguous routing and avoids a large class of accidental misconfigurations common in simpler tunnelers.
 
-Main responsibility: persistence.
+## 🌐 Domain and Endpoint Model
 
-Key pieces:
-- `src/store/`
+Cloudless distinguishes between several endpoint families.
 
-What it stores:
-- users and plans
-- domains and verification tokens
-- ACL and policy tables
-- dashboard and admin JSON views
+### Cloudless HTTPS endpoints
 
-Rule:
-- the store is control-plane only
-- the dataplane must stay database-free
+These are endpoints published on Cloudless-managed names.
+They are always exposed as HTTPS and always handled in proxy mode.
 
-### Dashboard
+Architectural consequences:
+- TLS is terminated by Cloudless
+- the server presents the public certificate
+- backend HTTP or HTTPS behavior is resolved using explicit hints or backend probing where applicable
+- Host and SNI rewriting may be required to match backend expectations
 
-Main responsibility: external web interface.
+### Raw transport endpoints
 
-Key pieces:
-- `dashboard/`
-- sleeve sidecar for IPC bridging
+These are public `tcp` and `udp` slots.
+They are transport-oriented and do not carry web semantics.
 
-What it does:
-- authenticate browser sessions
-- call backend through IPC
-- expose admin and user API
-- stream runtime events over websocket
+Architectural consequences:
+- no HTTP interpretation
+- no TLS termination by Cloudless
+- exposure is tied to the requested public slot
+- activation and access control can be handled separately from tunnel creation
 
-Rule:
-- dashboard is an API client of the core, not a second backend
+### Full custom-domain endpoints
 
-### Pair
+These are bring-your-own-domain endpoints.
+They are distinct from Cloudless-managed HTTPS gadget names.
 
-Main responsibility: lightweight share and activation UX.
+Architectural consequences:
+- Cloudless acts as a passthrough system for the public connection path
+- end-to-end TLS stays between the external client and the backend when the application protocol uses TLS
+- Cloudless still enforces routing and safety constraints at setup time
 
-Key pieces:
-- `src/core/pair.c`
-- pair HTTP host handling in `src/common/http_static_proxy.c`
+## 🔁 Data Plane
 
-What it does:
-- issue pair codes
-- bind activators
-- create short-lived pair sessions
-- render pair landing and service views
+The data plane handles live network traffic after the binding has been created.
 
-Pair is not a bolt-on helper.
-It is part of the same service lifecycle and uses the same runtime model as the rest of the system.
+Its responsibilities are:
+- accept incoming traffic for the public endpoint
+- match traffic to the runtime binding
+- apply the selected mode
+- forward the resulting stream or datagrams efficiently
 
-## Canonical flows
+### Proxy mode
 
-### Register -> Verify -> Tunnel
+Used for Cloudless HTTPS endpoints.
 
-1. User calls `register@` through SSH.
-2. Control plane validates arguments and writes pending data to store.
-3. User calls `verify@ TOKEN`.
-4. Control plane validates token and confirms ownership.
-5. User opens `@up` or `@tunnel`.
-6. Control plane creates service objects.
-7. Dataplane exposes derived public reachability.
+Cloudless terminates the public TLS session, interprets the public HTTP or HTTPS intent, and forwards traffic to the backend according to resolved backend behavior.
 
-### Dashboard login
+### Passthrough mode
 
-1. Browser loads dashboard.
-2. User logs in with OTP or session cookie.
-3. Dashboard talks to backend over sleeve IPC.
-4. Backend returns user snapshot and permissions.
-5. Dashboard enables user or admin views.
+Used for raw transport or full custom-domain cases where Cloudless must not terminate the application-layer security.
 
-### Pair activation
+The system forwards traffic without converting the endpoint into a Cloudless-managed web proxy.
 
-1. Host exposes a service.
-2. Control plane prints or renders a pair URL.
-3. Remote user opens the pair URL.
-4. Pair host activates identity and binds the activator IP.
-5. Pair session is created.
-6. Keepalive and disconnect manage lifecycle.
+## ⚙️ Algorithms and Strategies
 
-## Control substrate
+Cloudless is opinionated in the algorithms it uses.
+The goal is not maximal flexibility at any cost, but stable behavior under real usage.
 
-The control plane is SSH-first.
-Instead of inventing a large external protocol surface, Cloudless centers control semantics around SSH commands and validated IPC flows.
-That gives the system a mature authenticated transport without turning the dataplane into an API framework.
+### 1. Deterministic resolution
 
-Current product-facing verbs are centered on:
-- `@up`
-- `@tunnel`
-- user commands like `register`, `verify`, `ls`, `sessions`, `get`, `put`, `protect`
-- admin commands exposed consistently through CLI and IPC
+The same tunnel request should resolve to the same exposure model.
 
-## Layer contracts
+Benefit:
+- easier debugging
+- fewer surprise transitions
+- stable mental model for the user
 
-- control plane mutates runtime state
-- dataplane consumes runtime state
-- store persists control-plane data
-- dashboard reaches backend only through IPC
-- pair is UX around the same canonical service model, not a parallel model
+### 2. Single-pass decision making
 
-## Runtime invariants summary
+The control plane resolves the requested mode in one compact decision path instead of relying on long chains of deferred negotiation.
 
-- service is the central runtime entity
-- public reachability is derived from service state
-- worker-owned file descriptors must be closed by the owner worker
-- dataplane remains policy-free in the hot path
-- dashboard and CLI must expose the same backend semantics
-- pair lifecycle must cleanup activator bindings and session state on failure
+Benefit:
+- lower setup latency
+- fewer hidden state transitions
+- reduced room for inconsistent intermediate states
 
-See `INVARIANTS.md` for the consolidated invariant set.
+### 3. Hint-first backend interpretation
 
-## Source-aligned notes
+When protocol hints are provided, they are treated as the most reliable source for backend web behavior.
+Only when required does the system probe the backend.
 
-Cloudless is composed of two distinct layers:
+Benefit:
+- less guesswork
+- better control for advanced users
+- fewer accidental backend mismatches
 
-1. Control plane:
-   SSH commands such as register@, verify@, put@, get@, protect@, activate@, and admin commands.
+### 4. Public-label-driven semantics
 
-2. Tunnel plane:
-   Reverse SSH tunnels using up@ or tunnel@.
+The public bind token is meaningful.
+Reserved public labels such as `tcp`, `udp`, and `https*` are used to select legal exposure classes.
 
-These layers are independent and follow different execution paths.
+Benefit:
+- compact user interface
+- explicit routing semantics
+- cleaner protocol separation
 
-Tunnel mode is selected by the SSH username such as up or tunnel.
-The public exposure is selected by the reverse bind token or public hostname, while backend metadata comes only from SSH command-line hints or backend probe. The public side and the backend side are different models and must not be mixed.
+### 5. Runtime binding instead of static service inventory
 
-The current tunnel matrix is:
-- up@:
-  - public HTTPS gadget endpoint on Cloudless
-  - raw tcp and udp slots may coexist
-  - gadget hints are treated as truth
-  - raw tcp and udp are never probed
-  - gadget HTTP or HTTPS backend is probed only when hints are missing
-- tunnel@:
-  - raw tcp and udp
-  - Cloudless HTTPS gadget endpoints
-  - registered Cloudless hostnames in HTTPS proxy mode
-  - full custom domains in passthrough mode
-  - raw tcp and udp are never probed
-  - Cloudless HTTPS endpoints probe backend HTTP or HTTPS only when hints are missing
-  - full custom domains use TLS safety only and do not fall back to proxy mode
+Cloudless does not require a pre-populated service catalog before it can publish an endpoint.
+The binding is created from the live request.
 
-The validation flow now carries an explicit domain kind for tunnel decisions:
-- gadget
-- Cloudless hostname
-- full custom domain
-- raw
+Benefit:
+- minimal ceremony
+- instant publication workflow
+- reduced administrative overhead
 
-Initial route mode and probe policy are resolved from service type plus domain kind instead of being scattered across later mutation paths.
+## 🚄 Performance Strategy
 
-Human verification is not applied to admin commands.
-It is limited to selected user-facing actions such as register, verify, release, script, and protect.
+Cloudless is designed to keep the fast path simple.
 
-IPC communication between dashboard and backend includes protocol versioning and capability validation.
-Mismatch results in explicit failure rather than silent degradation.
+### Event-driven I/O
 
-Connection teardown is defensive:
-- half-close is delayed until buffers are drained
-- connection map entries are invalidated before final close
-- mailbox saturation triggers safe fallback paths
+The system uses non-blocking sockets and event-driven scheduling.
+This keeps a small number of workers capable of handling many simultaneous connections efficiently.
 
-The system depends on external SSH client behavior such as Dropbear or OpenSSH.
-Assumptions about command execution and output must be validated explicitly.
+### Minimal buffering
 
-## Why the architecture works
+Traffic forwarding is kept as direct as possible.
+The design avoids unnecessary layers that would introduce additional copies, queues, or latency.
 
-Cloudless is strong because it separates mutation, forwarding, persistence and presentation.
-That separation keeps the hot path small, the CLI expressive, the dashboard replaceable and the product extensible without turning the codebase into a haunted forest of cross-calls.
+### Bounded state
+
+The runtime model favors compact live state associated with active bindings and active traffic.
+The system avoids turning the control plane into a large persistent orchestration layer for simple tunnel use cases.
+
+### Early decision, cheap execution
+
+Expensive decisions belong in the control and resolution path.
+The live data path should mostly execute already-decided behavior.
+
+## 🔐 Security Model
+
+Cloudless keeps security decisions explicit.
+
+### Control entry
+
+SSH is the single control-plane entry point.
+Authentication is therefore unified around SSH identities instead of parallel account systems.
+
+### Clear proxy versus passthrough boundary
+
+Cloudless-managed HTTPS endpoints are proxied.
+Custom-domain passthrough endpoints are not silently converted into proxy mode.
+
+### No hidden backend rewriting authority
+
+Backend behavior is derived from the request model and explicit hints.
+Cloudless does not treat the public side as permission to invent arbitrary backend semantics.
+
+### Operational safety bias
+
+Where there is ambiguity, the system prefers explicitness and constrained behavior over magical convenience.
+
+## 🧩 Why the Architecture Matters
+
+Many tunneling systems blur together:
+- control commands
+- endpoint naming
+- backend identity
+- transport mode
+- TLS behavior
+
+Cloudless keeps these concerns separate.
+That is its architectural signature.
+
+The result is a system that is:
+- easier to reason about
+- easier to audit conceptually
+- more predictable in edge cases
+- better suited to users who want exact exposure behavior
+
+## 📌 Summary
+
+Cloudless is an SSH-first architecture where user intent is resolved into a precise runtime binding and then executed by a lean data plane.
+
+Its distinguishing characteristics are:
+- explicit control-plane semantics
+- deterministic exposure rules
+- clear proxy and passthrough separation
+- performance-oriented live traffic handling
+- minimal external surface area

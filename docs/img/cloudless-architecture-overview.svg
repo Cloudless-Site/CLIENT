@@ -39,7 +39,7 @@
 
   <text class="small" x="110" y="254">Public endpoint is defined by the SSH -R public side. Backend metadata comes only from hint or probe.</text>
 
-  <rect class="box2" x="80" y="310" width="580" height="235"/>
+  <rect class="box2" x="80" y="310" width="580" height="265"/>
   <text class="h1" x="110" y="350">up@ 🌐</text>
   <text class="body" x="110" y="386">Public side:</text>
   <text class="small" x="140" y="416">• HTTPS gadget on Cloudless domain</text>
@@ -50,7 +50,7 @@
   <text class="small" x="140" y="544">• hint present → truth ✅</text>
   <text class="small" x="140" y="572">• hint missing → HTTP/HTTPS probe 🔍</text>
 
-  <rect class="box3" x="740" y="310" width="580" height="235"/>
+  <rect class="box3" x="740" y="310" width="580" height="265"/>
   <text class="h1" x="770" y="350">tunnel@ 🔧</text>
   <text class="body" x="770" y="386">Public side:</text>
   <text class="small" x="800" y="416">• raw TCP / raw UDP</text>
@@ -58,9 +58,10 @@
   <text class="small" x="800" y="472">• full custom domain passthrough 🔒</text>
 
   <text class="body" x="770" y="514">Backend resolution:</text>
-  <text class="small" x="800" y="544">• gadget / Cloudless host: hint advisory or HTTP/HTTPS probe</text>
-  <text class="small" x="800" y="572">• full custom domain: TLS safety only</text>
-  <text class="small" x="800" y="600">• raw TCP / UDP: never probed</text>
+  <text class="small" x="800" y="544">• gadget / Cloudless host:</text>
+  <text class="small" x="826" y="568">hint advisory or HTTP/HTTPS probe</text>
+  <text class="small" x="800" y="596">• full custom domain: TLS safety only</text>
+  <text class="small" x="800" y="624">• raw TCP / UDP: never probed</text>
 
   <rect class="box4" x="80" y="610" width="1240" height="270"/>
   <text class="h1" x="110" y="652">Resolution flow 🧭</text>

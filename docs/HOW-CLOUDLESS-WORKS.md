@@ -1,227 +1,172 @@
-# HOW CLOUDLESS WORKS 🚀
+# 📖 How Cloudless Works
 
-![Cloudless architecture overview](img/cloudless-architecture-overview.svg)
+## 🎯 Purpose
 
-## What is Cloudless
+This document explains the runtime behavior of Cloudless.
+It focuses on what happens from the moment a user opens an SSH session to the moment traffic starts flowing.
 
-Cloudless is a tunneling system that exposes local services through SSH in a deterministic way.
+For the broader design see [Architecture](../10-architecture/ARCHITECTURE.md).
+For commands and examples see the [User manual](../70-readmes/README-USER.md).
 
-✨ Key principles:
-- no ambiguity
-- no hidden behavior
-- strict separation between public side and backend metadata
+## 🔌 Entry Point
 
-## Core idea 🧠
+Everything starts from an SSH connection.
 
-Every service is identified by:
+Two broad families of actions exist:
+- control-plane actions such as registration, inspection, verification, activation, and dashboard access
+- tunnel-plane actions such as `up@` and `tunnel@`
 
-`public_label + public_port`
+For tunnel creation, the incoming request provides:
+- a command verb
+- a public bind token
+- a public port
+- a backend address through the reverse tunnel request
+- optional protocol hints
+
+## ⚙️ Resolution Flow
+
+Cloudless turns the request into a live binding through a compact runtime flow.
+
+```text
+parse → classify → resolve → activate
+```
+
+### Step 1 — Parse
+
+Cloudless extracts:
+- the requested verb
+- the public bind token
+- the public port
+- the backend destination carried by the reverse tunnel
+- any hint affecting backend web behavior
+
+At this stage the system has not yet decided whether the request is raw transport, HTTPS proxy, or custom-domain passthrough.
+
+### Step 2 — Classify
+
+The public bind token and command verb determine the legal exposure family.
 
 Examples:
-- `https + 443`
-- `tcp + 22`
-- `udp + 53`
+- empty public token with `up@` means generated Cloudless HTTPS gadget publishing
+- `https`, `https1`, `https2`, and similar labels belong to the Cloudless HTTPS family
+- `tcp` and `udp` are reserved raw transport labels
+- a hostname containing dots may represent either a Cloudless-managed hostname or a full custom domain depending on the request
 
-This identity is stable and explicit.
+This step is crucial because Cloudless does not want public endpoint type to be ambiguous.
 
-## Public vs backend ⚠️
+### Step 3 — Resolve backend behavior
 
-Cloudless enforces a strict rule:
+Once the public exposure family is known, Cloudless decides how the backend should be reached.
 
-`Public endpoint ≠ Backend service`
+For Cloudless HTTPS endpoints:
+- the public side remains HTTPS
+- the backend may be HTTP or HTTPS
+- explicit command-line hints are preferred when present
+- backend probing is used only where required
+- Host and SNI rewriting may be applied when necessary to match backend expectations
 
-- `-R` defines only the public side
-- backend metadata comes from:
-  - hint ✅
-  - probe 🔍
+For raw transport:
+- the system keeps transport semantics raw
+- no web interpretation is introduced
 
-Cloudless does not:
-- derive backend metadata from `-R`
-- rewrite backend metadata after service creation
-- guess hidden fallbacks at runtime
+For full custom domains:
+- the system keeps the public connection in passthrough mode
+- Cloudless does not turn the endpoint into a Cloudless HTTPS proxy
 
-## Two modes 🔀
+### Step 4 — Activate the binding
 
-### `up@`
+After resolution, Cloudless creates the live runtime mapping.
 
-```bash
-ssh -R :443:localhost:8080 up@cloudless.site
-```
+At that point:
+- the public endpoint exists
+- the requested mode is fixed for that binding
+- the data plane can begin accepting traffic
 
-- public endpoint is always a Cloudless HTTPS gadget 🌐
-- Cloudless terminates TLS
-- Cloudless acts as proxy
+Some endpoint families become immediately usable.
+Others still require consumer-side activation or equivalent access authorization before external traffic is admitted.
 
-Backend resolution:
-- hint present → truth
-- hint missing → HTTP/HTTPS probe
+## 🌐 Endpoint Behavior in Practice
 
-### `tunnel@`
+### Cloudless HTTPS gadget or Cloudless HTTPS label
 
-```bash
-ssh -R tcp:22:localhost:22 tunnel@cloudless.site
-```
-
-Supports:
-- raw TCP 🔌
-- raw UDP 📡
-- HTTPS on Cloudless hosts
-- full custom domains in passthrough mode 🔒
-
-Backend resolution depends on service type.
-
-## Service types 📦
-
-### 1. RAW (`tcp` / `udp`)
-
-- no proxy
-- no TLS termination
-- no probe
-- direct tunnel semantics
-
-Hints for raw services are informational only.
-
-### 2. Cloudless HTTPS (gadget or Cloudless host)
-
+Runtime behavior:
 - public endpoint is HTTPS
-- TLS is terminated by Cloudless
-- Cloudless proxies to the backend
+- Cloudless terminates public TLS
+- Cloudless forwards to the backend in proxy mode
+- backend web behavior is selected using hints or backend probe
 
-Backend metadata comes from:
-- hint if present
-- otherwise HTTP/HTTPS probe
+Typical result:
+- fast web publishing with a stable public model
+- no need for the user to expose raw TLS directly on the public side
 
-### 3. Full custom domain
+### Raw TCP or raw UDP slot
 
-- always passthrough
-- Cloudless does not terminate TLS
-- Cloudless does not proxy HTTP
-- only TLS safety is checked
+Runtime behavior:
+- public endpoint is a transport slot
+- Cloudless does not reinterpret it as a web endpoint
+- consumer access can be gated separately from publication
 
-## High-level flow 🧭
+Typical result:
+- SSH, databases, WireGuard-style transport, custom protocols, or UDP applications can be published without forcing web semantics onto them
 
-```mermaid
-flowchart TD
-    A[SSH session to Cloudless] --> B{Verb}
-    B -->|up@| C[HTTPS gadget only]
-    B -->|tunnel@| D[Raw TCP/UDP or Cloudless HTTPS host or full custom domain]
+### Full custom-domain passthrough
 
-    C --> E[identity = public_label + public_port]
-    D --> E
+Runtime behavior:
+- the endpoint remains tied to the user's own domain
+- Cloudless routes the traffic but does not terminate the application-layer TLS for that endpoint family
 
-    E --> F[Resolve before create]
+Typical result:
+- the user retains end-to-end TLS ownership for the custom domain path
 
-    F --> G{Hint present?}
-    G -->|yes| H[Backend metadata from SSH command line]
-    G -->|no, web case| I[HTTP/HTTPS probe]
-    G -->|raw| J[No probe]
+## 🔁 Incoming Traffic Path
 
-    H --> K[Create service]
-    I --> K
-    J --> K
+Once a binding is live, the runtime path is simple:
 
-    K --> L[No post-create mutation]
+1. external traffic arrives at the public endpoint
+2. Cloudless matches the endpoint to the active binding
+3. the data plane applies the resolved mode
+4. traffic is forwarded to the backend
 
-    L --> M[Pair / HTML uses SSH metadata]
-    L --> N[Proxy route for Cloudless HTTPS]
-    L --> O[Passthrough for full custom domain]
-```
+There is no second round of high-level negotiation on the fast path.
+The heavy decision was already made during setup.
 
-## Visual overview 🗺️
+## ⚡ Runtime Properties
 
-### `up@`
+### Deterministic
 
-```mermaid
-flowchart LR
-    A[SSH client] --> B[up@]
-    B --> C[Cloudless HTTPS gadget]
-    C --> D{Hint present?}
-    D -->|yes| E[Use hint]
-    D -->|no| F[Probe HTTP/HTTPS]
-    E --> G[Create service]
-    F --> G
-    G --> H[Proxy traffic]
-```
+Given the same public request model and the same hints, Cloudless aims to produce the same exposure behavior.
 
-### `tunnel@`
+### Immediate
 
-```mermaid
-flowchart LR
-    A[SSH client] --> B[tunnel@]
-    B --> C{Service kind}
-    C -->|tcp / udp| D[Raw tunnel]
-    C -->|Cloudless HTTPS host| E[Proxy]
-    C -->|Full custom domain| F[Passthrough]
-    E --> G{Hint?}
-    G -->|yes| H[Use advisory hint]
-    G -->|no| I[Probe HTTP/HTTPS]
-    F --> J[TLS safety]
-```
+The binding is derived from the live request itself.
+Cloudless does not require a long provisioning workflow before basic tunnel use.
 
-## Hint format 🧩
+### Explicit
 
-Hints describe backend metadata explicitly:
+Cloudless prefers visible rules over hidden convenience.
+This is why public labels, command verbs, and hints all matter.
 
-`<label>:<port>#<backend_host>:<backend_port>/svc/<http|https>[;host=...][;sni=...]`
+### Cheap on the fast path
 
-Example:
+Classification and resolution happen before live traffic forwarding.
+Once traffic is flowing, the data plane mostly executes already-decided behavior.
 
-`https:443#192.168.1.10:8080/svc/http;host=myapp.local`
+## 🚄 Why This Flow Is Fast
 
-Meaning:
-- backend mode (`http` or `https`)
-- backend host and port
-- optional HTTP Host rewrite
-- optional TLS SNI value
+Cloudless keeps the runtime path short by using a few practical strategies:
+- compact parsing of SSH intent
+- early classification of endpoint type
+- hint-first backend interpretation
+- event-driven traffic handling after activation
 
-## Probe 🔍
+This reduces both setup ambiguity and per-connection overhead.
 
-Cloudless probes only when needed.
+## 📌 Summary
 
-Cloudless probes:
-- HTTP
-- HTTPS
+Cloudless works by converting SSH intent into a concrete public exposure model, resolving the correct runtime behavior, and then letting a lean data plane execute that decision.
 
-Cloudless never probes:
-- raw TCP
-- raw UDP
-
-Probe results do not rewrite the service model after creation.
-They are used to observe compatibility and emit warnings when needed.
-
-## Routing model 🧱
-
-Routing is decided once:
-
-`resolve → create → done`
-
-No:
-- runtime mutation
-- retroactive fixups
-- hidden fallback from public endpoint to backend metadata
-
-## Pair / activation 🔗
-
-Pair and activation views use metadata coming from:
-- SSH command line hints
-
-This keeps user-facing information aligned with the declared backend metadata.
-
-## Why Cloudless is different 💡
-
-Typical tunnel tools often mix public exposure and backend assumptions.
-Cloudless keeps them separate.
-
-That gives you:
-- explicit routing behavior
-- deterministic service identity
-- clean proxy vs passthrough semantics
-- fewer surprising runtime transitions
-
-## Summary 🧾
-
-Cloudless is built around one invariant:
-
-**Public exposure is independent from backend implementation.**
-
-Everything else follows from that rule.
+In short:
+- SSH expresses intent
+- Cloudless resolves the endpoint class
+- the binding becomes live
+- traffic follows the already-chosen rules
