@@ -6,7 +6,7 @@ Expose your local services to the internet using SSH — with zero ambiguity.
 
 ## 🎥 Architecture Deep Dive
 
-[![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://your-video-link)
+[![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://notebooklm.google.com/notebook/98826bdf-b906-4be3-a8de-3b60550ac230)
 
 *real internals · no slides · no fluff*
 
