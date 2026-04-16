@@ -2,8 +2,8 @@
 
 Expose your local services to the internet using SSH — with zero ambiguity.
 
-🎥 **[!Architecture Deep Dive](real internals, no fluff)**
-[![Watch Architecture Video](docs/img/architecture-video-thumb.png)](docs/video/cloudless-architecture.mp4)
+🎥 **Architecture Deep Dive(real internals, no fluff)**
+![Watch Architecture Video]((docs/video/cloudless-architecture.mp4)
 
 ## What is Cloudless
 
