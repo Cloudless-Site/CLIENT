@@ -1,3 +1,29 @@
+
+## Overview 🔍
+
+Scoutless is a high-performance network discovery tool written in C, designed to operate with minimal overhead and maximum control over network interactions.
+
+## Design Principles ⚙️
+
+- Event-driven architecture based on epoll
+- Global pacing to avoid network stress
+- No unnecessary abstractions or external dependencies
+- Direct socket control for TCP, UDP, and ICMP
+
+## Key Characteristics 🚀
+
+- Fast host discovery using multicast + ICMP
+- Incremental expansion strategy for network exploration
+- TCP and UDP service discovery with non-blocking I/O
+- Single-socket UDP design for efficiency
+
+## Performance Strategy 🧠
+
+- Global pacing applied to all probes
+- Windowed scanning using epoll entries
+- Minimal memory overhead and predictable behavior
+
+
 # Scoutless
 
 ## Scope
@@ -299,3 +325,40 @@ This document intentionally does not claim:
 - Windows backend support in this tree
 
 Those claims would not be aligned with the current source base.
+
+
+## Real Behavior ⚠️
+
+Scoutless does not rely on passive assumptions or protocol purity.
+
+- Any ICMP response is treated as valid (no strict filtering)
+- Discovery is driven by observed responses, not predefined topology
+- Host expansion is dynamic (new hosts generate new scan windows)
+- No blocking operations: everything is non-blocking and epoll-driven
+
+## Discovery Pipeline 🧩
+
+1. Initial multicast + ICMP phase
+2. Host expansion via response-driven windows
+3. TCP liveness validation
+4. TCP service discovery (connect + probe)
+5. UDP discovery using single socket + recvfrom drain
+
+Each phase is constrained only by global pacing and epoll capacity.
+
+## Critical Design Constraints 🔬
+
+- Global pacing is enforced across ALL protocols (ICMP, TCP, UDP)
+- No per-module rate control divergence allowed
+- Epoll loop must never be blocked by synchronous operations
+- UDP receive path must always be drained to avoid packet loss
+
+## Known Fragilities (Design Awareness) ⚠️
+
+- Incorrect pacing propagation can stall entire discovery
+- Blocking probe paths can break epoll fairness
+- UDP matching inefficiencies can become O(n²) under load
+- Mis-accounted inflight targets can lead to infinite loops
+
+These are not abstract risks but concrete failure modes observed during development.
+

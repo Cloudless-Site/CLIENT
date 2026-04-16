@@ -1,3 +1,34 @@
+
+## Architectural Philosophy
+
+Cloudless is intentionally designed as a single-process, monolithic C system.
+
+The system avoids distributed internal architectures, RPC layers, and multi-process orchestration in favor of a single address space where control plane, dataplane, and storage operate together.
+
+This design eliminates intra-system network hops, reduces context switching, and allows direct memory sharing across all subsystems.
+
+### Core Principles
+
+- Single binary, single process runtime
+- No internal RPC or serialization layers
+- Direct function calls instead of inter-process communication
+- Deterministic execution model without external orchestrators
+
+### Performance-Oriented Design Choices
+
+- Extensive use of hash tables for routing, lookup, and matching
+- Cacheline-aware data layout to improve memory locality
+- Epoll-based I/O for scalable event-driven networking
+- Minimal thread usage with explicit control (including core pinning where applicable)
+- SQLite used as embedded storage to avoid external database dependencies
+- Use of fast fingerprinting techniques (e.g. simhash-like approaches) where needed
+
+### Trade-offs
+
+This approach reduces distributed complexity but increases internal responsibility: all coordination, scheduling, and state management are handled explicitly within the process.
+
+The result is a system that favors predictability, performance, and debuggability over modular distribution.
+
 # 🏗️ Cloudless Architecture
 
 ## 🎯 Purpose
