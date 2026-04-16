@@ -100,6 +100,16 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 - Scoutless network discovery client and docs
 - Android zero-effort client app for local discovery and tunnel launch
 
+⚠️ Public Service
+
+Cloudless provides a public endpoint service.
+
+- free for testing and evaluation
+- no uptime or availability guarantees
+- limits may be introduced at any time
+
+You expose it. You own it.
+
 ## Philosophy
 
 Cloudless follows one invariant:
