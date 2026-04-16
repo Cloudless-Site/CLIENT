@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 36px Arial, sans-serif; fill: #111111; }
+      .subtitle { font: 400 20px Arial, sans-serif; fill: #444444; }
+      .h1 { font: 700 24px Arial, sans-serif; fill: #111111; }
+      .h2 { font: 700 20px Arial, sans-serif; fill: #111111; }
+      .body { font: 400 18px Arial, sans-serif; fill: #222222; }
+      .small { font: 400 16px Arial, sans-serif; fill: #333333; }
+      .box { fill: #f7f7f8; stroke: #cfd3d8; stroke-width: 2; rx: 22; ry: 22; }
+      .box2 { fill: #f3f8ff; stroke: #b9d1ff; stroke-width: 2; rx: 22; ry: 22; }
+      .box3 { fill: #f8fff4; stroke: #cfe7b5; stroke-width: 2; rx: 22; ry: 22; }
+      .box4 { fill: #fff8f2; stroke: #f0c9a9; stroke-width: 2; rx: 22; ry: 22; }
+      .arrow { stroke: #60656d; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .line { stroke: #60656d; stroke-width: 2; fill: none; }
+      .pill { fill: #111111; rx: 14; ry: 14; }
+      .pilltext { font: 700 14px Arial, sans-serif; fill: #ffffff; letter-spacing: 0.5px; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#60656d"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="980"/>
+
+  <text class="title" x="80" y="70">Cloudless architecture overview 🚀</text>
+  <text class="subtitle" x="80" y="106">Public exposure stays separate from backend metadata. Resolution happens before creation, with no post-create mutation.</text>
+
+  <rect class="box" x="80" y="150" width="1240" height="110"/>
+  <text class="h1" x="110" y="195">Core invariant 🧠</text>
+  <text class="body" x="110" y="232">identity = public_label + public_port</text>
+
+  <rect class="pill" x="790" y="177" width="180" height="32"/>
+  <text class="pilltext" x="812" y="198">NO BACKEND FROM -R</text>
+
+  <rect class="pill" x="992" y="177" width="240" height="32"/>
+  <text class="pilltext" x="1010" y="198">NO POST-CREATE FIXUP</text>
+
+  <text class="small" x="110" y="254">Public endpoint is defined by the SSH -R public side. Backend metadata comes only from hint or probe.</text>
+
+  <rect class="box2" x="80" y="310" width="580" height="235"/>
+  <text class="h1" x="110" y="350">up@ 🌐</text>
+  <text class="body" x="110" y="386">Public side:</text>
+  <text class="small" x="140" y="416">• HTTPS gadget on Cloudless domain</text>
+  <text class="small" x="140" y="444">• Cloudless terminates TLS</text>
+  <text class="small" x="140" y="472">• Cloudless acts as proxy</text>
+
+  <text class="body" x="110" y="514">Backend resolution:</text>
+  <text class="small" x="140" y="544">• hint present → truth ✅</text>
+  <text class="small" x="140" y="572">• hint missing → HTTP/HTTPS probe 🔍</text>
+
+  <rect class="box3" x="740" y="310" width="580" height="235"/>
+  <text class="h1" x="770" y="350">tunnel@ 🔧</text>
+  <text class="body" x="770" y="386">Public side:</text>
+  <text class="small" x="800" y="416">• raw TCP / raw UDP</text>
+  <text class="small" x="800" y="444">• HTTPS Cloudless hosts</text>
+  <text class="small" x="800" y="472">• full custom domain passthrough 🔒</text>
+
+  <text class="body" x="770" y="514">Backend resolution:</text>
+  <text class="small" x="800" y="544">• gadget / Cloudless host: hint advisory or HTTP/HTTPS probe</text>
+  <text class="small" x="800" y="572">• full custom domain: TLS safety only</text>
+  <text class="small" x="800" y="600">• raw TCP / UDP: never probed</text>
+
+  <rect class="box4" x="80" y="610" width="1240" height="270"/>
+  <text class="h1" x="110" y="652">Resolution flow 🧭</text>
+
+  <rect class="box" x="120" y="700" width="220" height="110"/>
+  <text class="h2" x="160" y="744">1. Resolve</text>
+  <text class="small" x="145" y="776">verb + public label + port</text>
+  <text class="small" x="175" y="800">+ domain_kind</text>
+
+  <rect class="box" x="420" y="700" width="220" height="110"/>
+  <text class="h2" x="466" y="744">2. Decide</text>
+  <text class="small" x="455" y="776">route_mode</text>
+  <text class="small" x="448" y="800">probe_policy</text>
+
+  <rect class="box" x="720" y="700" width="220" height="110"/>
+  <text class="h2" x="765" y="744">3. Create</text>
+  <text class="small" x="750" y="776">service is born final</text>
+  <text class="small" x="756" y="800">no later mutation</text>
+
+  <rect class="box" x="1020" y="700" width="220" height="110"/>
+  <text class="h2" x="1066" y="744">4. Run</text>
+  <text class="small" x="1045" y="776">pair uses SSH metadata</text>
+  <text class="small" x="1078" y="800">warnings only</text>
+
+  <path class="arrow" d="M340 755 H420"/>
+  <path class="arrow" d="M640 755 H720"/>
+  <path class="arrow" d="M940 755 H1020"/>
+
+  <path class="arrow" d="M370 260 V310"/>
+  <path class="arrow" d="M1030 260 V310"/>
+
+  <text class="small" x="101" y="916">Suggested README embed: ![Architecture](docs/img/cloudless-architecture-overview.svg)</text>
+</svg>
