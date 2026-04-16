@@ -99,4 +99,4 @@ Everything else derives from this.
 
 ## Status
 
-Actively developed. Focused on correctness over convenience.
+Actively developed. Focused on correctness over convenience. 
