@@ -9,10 +9,12 @@ Your API is the standard OpenSSH client (`ssh`). Your identity is your SSH publi
 
 ## 🗺️ The "Mental Model"
 
-In Cloudless, the **SSH username is the command** on the control plane and the **mode selector** on the tunnel plane.
+In Cloudless, the **SSH username is the command** on the control plane and selects the publication model on the tunnel plane.
 
 1.  **Control Plane:** `ssh command@cloudless.site` (e.g., `register`, `ls`, `activate`).
-2.  **Tunnel Plane:** `ssh -R ... up@cloudless.site` or `ssh -R ... tunnel@cloudless.site`. The protocol (`http`, `https`, `tcp`, `udp`) is derived from the `-R` bind token, not from the SSH username.
+2.  **Tunnel Plane:** `ssh -R ... up@cloudless.site` or `ssh -R ... tunnel@cloudless.site`.
+    - `up@` publishes a public HTTPS gadget endpoint.
+    - `tunnel@` publishes either raw `tcp` / `udp`, a Cloudless HTTPS endpoint, or a custom full-domain passthrough endpoint.
 3.  **Identity:** We track your **SSH Key Fingerprint (SHA256)**. No passwords, no accounts.
 
 ---
@@ -21,29 +23,32 @@ In Cloudless, the **SSH username is the command** on the control plane and the *
 
 For `ssh -R`, Cloudless parses the left-most bind token before the public port using these mutually exclusive rules:
 
-- `http` or `https` -> **generated gadget host** with protocol hint
-- `tcp` or `udp` -> reserved transport verbs
-- empty token (`-R :443:...`) -> **generated gadget host** with **no protocol hint**
-- token with no dot (for example `mio`) -> **registered Cloudless label**, equivalent to `mio.cloudless.site`
+- `tcp` or `udp` -> reserved raw transport labels
+- `https`, `https1`, `https2`, ... -> Cloudless HTTPS gadget labels
+- empty token (`-R :443:...`) -> generated Cloudless HTTPS gadget label
+- token with no dot (for example `mio`) -> registered Cloudless label, equivalent to `mio.cloudless.site`
 - token containing a dot -> explicit hostname (`myapp.cloudless.site` or `gigi.mydomain.site`)
+
+`http` is not a valid public bind label.
 
 Examples:
 
 ```bash
 ssh -R mio:443:192.168.1.1:554 tunnel@cloudless.site
 ssh -R mio.cloudless.site:443:192.168.1.1:554 tunnel@cloudless.site
-ssh -R :443:192.168.1.1:554 tunnel@cloudless.site
-ssh -R https:443:192.168.1.1:443 tunnel@cloudless.site
+ssh -R :443:192.168.1.1:554 up@cloudless.site
+ssh -R https:443:192.168.1.1:443 up@cloudless.site
+ssh -R tcp:10000:192.168.1.10:22 tunnel@cloudless.site
 ```
 
 `mio` and `mio.cloudless.site` are synonyms for the same registered Cloudless label.
 
 ## ⚡ Quick Start: The "Proper" Way
 
-Tunnel protocols are not selected via the SSH username.
-Use `up@` or `tunnel@` as the SSH username, and select the transport protocol through the reverse bind specification (`-R`).
+Use `up@` when you want a public Cloudless HTTPS gadget endpoint.
+Use `tunnel@` when you want raw `tcp` / `udp`, a registered Cloudless HTTPS endpoint, or a full custom-domain passthrough endpoint.
 
-Before exposing a production service, you typically register a stable domain name (e.g., `myapp.cloudless.site`).
+Before exposing a production service, you typically register a stable Cloudless name (e.g., `myapp.cloudless.site`).
 
 ### 1. Register
 Reserve a subdomain linked to your SSH key.
@@ -62,10 +67,10 @@ Prove you own the email/request.
 ssh verify@cloudless.site <TOKEN_FROM_EMAIL>
 ```
 
-### 3. Tunnel (Example: HTTPS)
-Expose your local server running on port 8443.
+### 3. Tunnel (Example: HTTPS Gadget)
+Expose your local web backend through a Cloudless HTTPS endpoint.
 ```bash
-ssh -R myapp.cloudless.site:443:localhost:8443 up@cloudless.site
+ssh -R myapp.cloudless.site:443:localhost:8443 tunnel@cloudless.site
 ```
 
 Now browse:
@@ -76,7 +81,7 @@ Now browse:
 Use one of these when you want the shortest useful path instead of a pilgrimage.
 
 - Instant web demo: `ssh -R :80:localhost:3000 up@cloudless.site`
-- Stable HTTPS demo: `ssh -R myapp.cloudless.site:443:localhost:8443 up@cloudless.site`
+- Stable HTTPS demo: `ssh -R myapp.cloudless.site:443:localhost:8443 tunnel@cloudless.site`
 - Controlled TCP demo: `ssh -R tcp:10000:localhost:22 tunnel@cloudless.site` then `ssh activate@cloudless.site` from the consumer machine
 
 ---
@@ -88,7 +93,7 @@ Don't want to register a permanent domain? **You don't have to.**
 If you omit the hostname in your SSH tunnel request (for example `-R :443:...`), Cloudless acts as a **Gadget Generator**. It assigns you a random, ephemeral subdomain instantly. No registration, no email, no database record.
 
 **How to use:**
-Simply leave the bind token empty (start with a colon `:`). `http` and `https` can also be used as gadget hints when you want to suggest a web protocol without naming a stable host.
+Simply leave the bind token empty (start with a colon `:`) or use a public gadget label such as `https`.
 
 ```bash
 # Syntax: ssh -R :<remote_port>:<local_host>:<local_port> ...
@@ -107,32 +112,45 @@ Tunnel Ready: g-x9y2z.cloudless.site -> port 80 (ACTIVE)
 
 ## 🚇 Tunnels: Which Protocol?
 
-Cloudless supports different protocols. Use the right tunnel mode for your needs.
+Cloudless supports different publication modes. Use the right tunnel mode for your needs.
 
-### 🌐 web publishing via `up@` (Web)
-For web servers. Tunnels become **ACTIVE** immediately upon connection.
+### 🌐 HTTPS gadget publishing via `up@`
+For web servers exposed through a Cloudless HTTPS endpoint. Tunnels become **ACTIVE** immediately upon connection.
 
--   **Recommended HTTPS example (`up@`)**:
-    **SNI-based routing.** Cloudless uses SNI to route HTTPS traffic.
+- Cloudless terminates TLS
+- Cloudless presents its own certificate
+- Cloudless proxies to the backend
+- if command-line hints are missing, Cloudless probes the backend to distinguish HTTP vs HTTPS
 
-    Cloudless operates in two distinct modes:
+Examples:
+```bash
+ssh -R :80:localhost:3000 up@cloudless.site
+ssh -R https:443:localhost:8443 up@cloudless.site
+```
 
-    1. **Gadget / Cloudless domain mode (`*.cloudless.site`)**
-       - TLS is terminated by Cloudless
-       - Cloudless presents its own certificate
-       - Host header is rewritten toward the backend
+### 🌐 HTTPS publishing via `tunnel@`
+For registered Cloudless subdomains and Cloudless HTTPS endpoints exposed through `tunnel@`.
 
-    2. **Custom domain mode (BYOD)**
-       - TLS is NOT terminated by Cloudless
-       - Traffic is passed through end-to-end
+- Cloudless terminates TLS
+- Cloudless proxies to the backend
+- if command-line hints are missing, Cloudless probes the backend to distinguish HTTP vs HTTPS
 
-    This behavior is deterministic and does not depend on runtime detection.
+Example:
+```bash
+ssh -R myapp.cloudless.site:443:localhost:8443 tunnel@cloudless.site
+```
 
--   **HTTP example (`up@`)**:
-    Cleartext HTTP. Useful if you want Cloudless to inspect traffic, modify headers via scripts, or perform logging.
-    ```bash
-    ssh -R myapp.cloudless.site:80:localhost:8080 up@cloudless.site
-    ```
+### 🌍 Full custom domain via `tunnel@`
+For bring-your-own-domain passthrough.
+
+- TLS is not terminated by Cloudless
+- traffic is passed through end-to-end
+- Cloudless keeps TLS safety checks and prints SSH console warnings if the backend is unreachable, mismatched, or fails TLS safety
+
+Example:
+```bash
+ssh -R app.example.com:443:localhost:443 tunnel@cloudless.site
+```
 
 ### 🔌 raw TCP via `tunnel@` (TCP)
 For databases, SSH, RDP, or custom TCP protocols.
@@ -422,21 +440,21 @@ It doesn’t do much, but it doesn’t need to. Its role is simple: to stay clos
 | `ls@` | | List your registered domains (Persistent Database). |
 | `sessions@` | `[json=1]` | List currently active tunnels (Live RAM Sessions). Use `json=1` for machine-readable output. |
 | `info@` | `<domain> [json=1]` | Show domain details: verification status, script presence, and size. Use `json=1` for JSON output. |
-| `status@` | `[json=1]` | Show your plan/quota summary. Use `json=1` for full server stats (includes RX/TX usage, rate limits, expiry). |
+| `status@` | `[json=1]` | Show your plan/quota summary. Use `json=1` for machine-readable status for the current user (includes RX/TX usage, rate limits, expiry). |
 | `watch@` | `[interval=<ms>]` | Tail live traffic logs (filtered to your fingerprint). Optional `interval=` clamps to 50–5000ms (default 200ms; higher values are capped). |
 | `activate@` | `[interval=<ms>]` | Enable access for the requesting fingerprint and associate it with the client IP that triggered the activation, then stream activation logs. Optional `interval=` for log polling (default 200ms, range 50-5000ms). Keep terminal open or Ctrl+C to exit. |
 | `login@` | | Generate one-time Web Dashboard magic link. Dashboard access can later be protected with passkeys or recovery keys. |
 | `put@` | `<domain> file=<path>` | Publish JavaScript edge script from a server-side file path. Requires domain ownership and VERIFIED status. |
 | `get@` | `<domain>` | Download JavaScript edge script (stdout). Requires domain ownership (verification not required). |
 | `protect@` | `<domain> user=<u> pass=<p>` OR `<domain> ip=<IP>` | Enable instant Basic Auth or IP allowlist via auto-generated edge script. Overwrites existing script. |
-| `kite@` | `[win\|arm64\|arm\|mac]` | Download Kite client bundle. Optional platform argument (default: linux). |
+| `kite@` | `[win\|arm64\|arm\|mac]` | Download Kite client bundle. Optional platform argument (default: linux). `mac` currently returns an explicit not-available error. |
 
 ### Data Plane Modes and Bind Tokens
 
 | SSH Username | Usage | Description |
 | :--- | :--- | :--- |
-| `up@` | `ssh -R [host]:443:local:port up@cloudless.site` or `ssh -R :80:local:port up@cloudless.site` | Web publishing mode. Hostname and public protocol are derived from the bind token and public port. Empty token or `http`/`https` creates a gadget host; a named host publishes that stable hostname. |
-| `tunnel@` | `ssh -R tcp:10000:local:22 tunnel@cloudless.site` | Raw tunnel mode. Use bind token `tcp` for TCP or `udp` for UDP when reserving public transport slots. Consumer access still requires `activate@` where applicable. |
+| `up@` | `ssh -R https:443:local:port up@cloudless.site` or `ssh -R :80:local:port up@cloudless.site` | HTTPS gadget publishing mode. Empty token or `https` creates a Cloudless gadget host. Public web exposure stays HTTPS on the Cloudless side; backend HTTP/HTTPS is decided by hints or backend probe. |
+| `tunnel@` | `ssh -R tcp:10000:local:22 tunnel@cloudless.site` | Mixed tunnel mode. Use bind token `tcp` or `udp` for raw transport, a registered Cloudless hostname for HTTPS proxy mode, or a full custom domain for HTTPS passthrough mode. Consumer access still requires `activate@` where applicable. |
 
 ### Notes on Command Arguments
 
