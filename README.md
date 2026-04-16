@@ -2,7 +2,7 @@
 
 Expose your local services to the internet using SSH — with zero ambiguity.
 
-🎥 **Architecture Deep Dive (real internals, no fluff)**
+🎥 **[!Architecture Deep Dive](real internals, no fluff)**
 [![Watch Architecture Video](docs/img/architecture-video-thumb.png)](docs/video/cloudless-architecture.mp4)
 
 ## What is Cloudless
@@ -82,9 +82,9 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 
 ## Documentation 📚
 
+- 📘 [User Manual](docs/README-USER.md)
 - 📖 [How Cloudless Works](docs/HOW-CLOUDLESS-WORKS.md)
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
-- 📘 [User Manual](docs/README-USER.md)
 - 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
 
 ## Clients
