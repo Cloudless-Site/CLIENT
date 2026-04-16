@@ -2,9 +2,6 @@
 
 **Cloudless** is a programmable reverse proxy and tunnel manager designed for hackers, developers, and sysadmins who believe the User Experience *is* the Protocol.
 
-**No proprietary client is required.**
-Your API is the standard OpenSSH client (`ssh`). Your identity is your SSH public key.
-
 ---
 
 ## 🗺️ The "Mental Model"

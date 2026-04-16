@@ -4,9 +4,6 @@
 
 This document describes the architectural model of Cloudless for a technical reader who wants to understand the system without reading the source code.
 
-For the runtime flow see [How Cloudless Works](../00-overview/HOW-CLOUDLESS-WORKS.md).
-For commands and real usage see the [User manual](../70-readmes/README-USER.md).
-
 ## 🚀 System Overview
 
 Cloudless is an SSH-driven exposure engine.

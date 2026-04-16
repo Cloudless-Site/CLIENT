@@ -5,9 +5,6 @@
 This document explains the runtime behavior of Cloudless.
 It focuses on what happens from the moment a user opens an SSH session to the moment traffic starts flowing.
 
-For the broader design see [Architecture](../10-architecture/ARCHITECTURE.md).
-For commands and examples see the [User manual](../70-readmes/README-USER.md).
-
 ## 🔌 Entry Point
 
 Everything starts from an SSH connection.
