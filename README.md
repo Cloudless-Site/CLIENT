@@ -58,7 +58,7 @@ public endpoint ≠ backend service
   - hint (explicit)
   - or probe (automatic, only where applicable)
 
-## Service model
+## Service model 🧩
 
 | Type | Behavior |
 |------|----------|
@@ -83,7 +83,6 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 
 *real internals · no slides · no fluff*
 
-
 ## Documentation 📚
 
 - 📘 [User Manual](docs/README-USER.md)
@@ -97,7 +96,7 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 - 🔎 [Scoutless](bin/scoutless) network discovery client  binaries
 - 🪁 [Kite](bin/kite)  UDP adapter client binaries
 
-Public Service ⚠️  
+⚠️  Public Service
 
 Cloudless provides a public endpoint service.
 
@@ -107,7 +106,7 @@ Cloudless provides a public endpoint service.
 
 You expose it. You own it.
 
-## Philosophy
+## Philosophy 🎸
 
 Cloudless follows one invariant:
 
