@@ -77,7 +77,7 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 | No post-create mutation | ✅ | often dynamic |
 | Clear proxy vs passthrough model | ✅ | often blurred |
 
-## 🎥 Architecture Deep Dive
+## Architecture Deep Dive 🎥
 
 [![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://raw.githubusercontent.com/Cloudless-Site/CLIENT/main/docs/video/cloudless.mp4)
 
@@ -91,13 +91,13 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
 - 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
 
-## Clients
+## Clients 💻
 
 - 📱 [Android App](android/apk/cloudless.apk) zero-effort app for local discovery and tunnel launch
 - 🔎 [Scoutless](bin/scoutless) network discovery client  binaries
 - 🪁 [Kite](bin/kite)  UDP adapter client binaries
 
-⚠️  Public Service
+Public Service ⚠️  
 
 Cloudless provides a public endpoint service.
 
