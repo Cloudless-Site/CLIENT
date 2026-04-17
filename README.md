@@ -1,4 +1,4 @@
-# Cloudless 🚀
+# 🚀 Cloudless 
 
 Expose your local services to the internet using SSH — with zero ambiguity.
 
@@ -13,7 +13,7 @@ Cloudless is a high-performance tunneling system that lets you publish services 
 
 No hidden behavior. No implicit routing. No surprises.
 
-## Quick start ⚡
+## ⚡ Quick start
 
 ```bash
 ssh -R :443:localhost:8080 up@cloudless.site
@@ -23,7 +23,7 @@ ssh -R :443:localhost:8080 up@cloudless.site
 
 ## Two modes
 
-### `up@` → zero-config publish 🌐
+### 🌐 `up@` → zero-config publish
 
 ```bash
 ssh -R :443:localhost:8080 up@cloudless.site
@@ -33,7 +33,7 @@ ssh -R :443:localhost:8080 up@cloudless.site
 - automatic backend detection when needed
 - instant exposure
 
-### `tunnel@` → full control 🔧
+### 🔧 `tunnel@` → full control
 
 ```bash
 ssh -R tcp:22:localhost:22 tunnel@cloudless.site
@@ -45,7 +45,7 @@ Supports:
 - HTTPS proxy on Cloudless domains
 - full custom domains in passthrough mode
 
-## Core idea 🧠
+## 🧠 Core idea
 
 Cloudless separates:
 
@@ -58,7 +58,7 @@ public endpoint ≠ backend service
   - hint (explicit)
   - or probe (automatic, only where applicable)
 
-## Service model 🧩
+## 🧩 Service model
 
 | Type | Behavior |
 |------|----------|
@@ -66,7 +66,7 @@ public endpoint ≠ backend service
 | HTTPS on Cloudless domain | proxy |
 | Full custom domain | passthrough |
 
-## Why Cloudless 💡
+## 💡 Why Cloudless
 
 Compared to typical tunneling tools, Cloudless is built around explicit routing decisions.
 
@@ -77,20 +77,20 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 | No post-create mutation | ✅ | often dynamic |
 | Clear proxy vs passthrough model | ✅ | often blurred |
 
-## Architecture Deep Dive 🎥
+## 🎥 Architecture Deep Dive
 
 [![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://raw.githubusercontent.com/Cloudless-Site/CLIENT/main/docs/video/cloudless.mp4)
 
 *real internals · no slides · no fluff*
 
-## Documentation 📚
+## 📚 Documentation
 
 - 📘 [User Manual](docs/README-USER.md)
 - 📖 [How Works](docs/HOW-CLOUDLESS-WORKS.md)
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
 - 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
 
-## Clients 💻
+## 💻 Clients
 
 - 📱 [Android App](android/apk/cloudless.apk) zero-effort app for local discovery and tunnel launch
 - 🔎 [Scoutless](bin/scoutless) network discovery client  binaries
@@ -106,7 +106,7 @@ Cloudless provides a public endpoint service.
 
 You expose it. You own it.
 
-## Philosophy 🎸
+## 🎸 Philosophy
 
 Cloudless follows one invariant:
 
@@ -114,6 +114,6 @@ Cloudless follows one invariant:
 
 Everything else derives from this.
 
-## Status 🚧
+## 🚧 Status
 
 Actively developed. Focused on correctness over convenience.
