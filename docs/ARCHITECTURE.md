@@ -1,6 +1,6 @@
 # Cloudless Architecture
 
-## Philosophy 🎸
+## 🎸 Philosophy
 
 Cloudless is a monolithic system written in C, designed with an intentionally minimal and old‑school approach.
 
@@ -15,7 +15,7 @@ The system favors:
 
 This is a hard‑rock approach to software: raw, explicit, and engineered to be understood end‑to‑end by a single developer.
 
-## High Level Overview
+## 🧭 High Level Overview
 
 Cloudless is composed of a single runtime that integrates:
 
@@ -28,7 +28,7 @@ Cloudless is composed of a single runtime that integrates:
 There are no distributed subsystems.
 All coordination happens inside the same process.
 
-## Runtime Flow
+## 🔄 Runtime Flow
 
 1. SSH connection is established
 2. Command string is received (exec request)
@@ -48,33 +48,34 @@ All coordination happens inside the same process.
 
 All steps happen inside the same process with no external orchestration.
 
-## Control Plane
+## 🎛️ Control Plane
 
 Responsible for parsing SSH commands, mapping verbs, managing pairing and configuring runtime state.
 
-## Dataplane
+## 🌊 Dataplane
 
 Handles TCP/UDP sockets, bridging and proxying using an event-driven loop.
 
-## Store
+## 🗄️ Store
 
 SQLite embedded storage for state, cache and configuration.
 
-## Performance & Optimization
+## ⚡ Performance & Optimization
 
 - hash tables for fast lookup
 - cache-friendly data structures
 - single process → no IPC overhead
 - epoll-based event loop
 - minimal allocations on hot paths
+- anti phishing bloom filter
 
-## Design Constraints
+## 📏 Design Constraints
 
 - no unnecessary abstraction layers
 - no hidden control flows
 - no distributed coordination
 - no dependency on external runtime services
 
-## Summary
+## 📌 Summary
 
 Monolithic, explicit, performance-oriented system designed for control and predictability.
