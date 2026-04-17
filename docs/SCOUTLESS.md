@@ -1,23 +1,23 @@
 
-## Overview 🔍
+## 🔍 Overview
 
 Scoutless is a high-performance network discovery tool written in C, designed to operate with minimal overhead and maximum control over network interactions.
 
-## Design Principles ⚙️
+## ⚙️  Design Principles
 
 - Event-driven architecture based on epoll
 - Global pacing to avoid network stress
 - No unnecessary abstractions or external dependencies
 - Direct socket control for TCP, UDP, and ICMP
 
-## Key Characteristics 🚀
+## 🚀 Key Characteristics
 
 - Fast host discovery using multicast + ICMP
 - Incremental expansion strategy for network exploration
 - TCP and UDP service discovery with non-blocking I/O
 - Single-socket UDP design for efficiency
 
-## Performance Strategy 🧠
+## 🧠 Performance Strategy
 
 - Global pacing applied to all probes
 - Windowed scanning using epoll entries
@@ -26,7 +26,7 @@ Scoutless is a high-performance network discovery tool written in C, designed to
 
 # Scoutless
 
-## Scope
+## 🎯 Scope
 
 Scoutless is a local-network host and service discovery tool written in C.
 
@@ -39,7 +39,7 @@ In this source tree it is focused on:
 
 It is not documented here as a generic internet scanner, OS fingerprinting engine, or scripting platform, because those capabilities are not present in these sources.
 
-## Execution model
+## ⚙️  Execution model
 
 Scoutless is single-process and event-driven.
 
@@ -51,7 +51,7 @@ The code uses:
 
 There is no thread scheduler in this code path.
 
-## Source layout
+## 🗂️ Source layout
 
 Main files in this tree:
 - `src/scoutless.c` — CLI parsing, runtime overrides, optional plan loading, final output
@@ -66,7 +66,7 @@ Main files in this tree:
 - `src/probes.c` — built-in TCP and UDP probe lists
 - `src/plan.c` — external plan file parser
 
-## Runtime limits and defaults
+## 📏 Runtime limits and defaults
 
 Important constants from the current sources:
 - maximum discovered hosts: `2048`
@@ -81,7 +81,7 @@ Important constants from the current sources:
 
 The host and service caps are hard limits in the current implementation.
 
-## Network context and scan modes
+## 📶 Network context and scan modes
 
 At startup Scoutless builds a `DiscoveryContext` from the local interface, local IPv4 address, netmask, default gateway, and local DNS.
 
@@ -96,17 +96,17 @@ Selection rules in current code:
 
 For `/31` networks, seed generation uses the two valid addresses in that network model.
 
-## Initial target population
+## 👥 Initial target population
 
 Initial targets are built from seed host indexes.
 
 Behavior depends on scan mode.
 
-### Full mode
+### 🔥 Full mode
 
 In `full` mode, Scoutless seeds the whole local subnet except the local host.
 
-### Window mode
+### 🪟 Window mode
 
 In `window` mode, Scoutless seeds:
 - a window of `±128` around the local host index
