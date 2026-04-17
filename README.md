@@ -114,6 +114,6 @@ Cloudless follows one invariant:
 
 Everything else derives from this.
 
-## Status
+## Status 🚧
 
 Actively developed. Focused on correctness over convenience.
