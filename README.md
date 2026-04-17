@@ -87,7 +87,7 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 ## Documentation 📚
 
 - 📘 [User Manual](docs/README-USER.md)
-- 📖 [How Cloudless Works](docs/HOW-CLOUDLESS-WORKS.md)
+- 📖 [How Works](docs/HOW-CLOUDLESS-WORKS.md)
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
 - 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
 - 📱 [Android App](android/apk/cloudless.apk)
