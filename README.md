@@ -90,13 +90,12 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 - 📖 [How Works](docs/HOW-CLOUDLESS-WORKS.md)
 - 🏗️ [Architecture](docs/ARCHITECTURE.md)
 - 🔎 [Scoutless Doc](docs/SCOUTLESS.md)
-- 📱 [Android App](android/apk/cloudless.apk)
 
 ## Clients
 
 - Kite client binaries
 - Scoutless network discovery client and docs
-- Android zero-effort client app for local discovery and tunnel launch
+-📱 [Android App](android/apk/cloudless.apk) zero-effort app for local discovery and tunnel launch
 
 ⚠️ Public Service
 
