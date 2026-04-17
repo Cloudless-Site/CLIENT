@@ -116,7 +116,7 @@ Bounds are clamped so addresses outside the subnet are not added.
 
 Duplicate targets are rejected.
 
-## Host discovery flow
+## 🔍 Host discovery flow
 
 The host discovery loop implemented by `discovery_run_host_discovery_loop()` is:
 
@@ -130,7 +130,7 @@ The host discovery loop implemented by `discovery_run_host_discovery_loop()` is:
 
 If the host cap is reached, pending unresolved targets are marked done and scanning stops.
 
-## Initial multicast + ICMP phase
+## 📡 Initial multicast + ICMP phase
 
 The initial host-discovery sweep combines passive discovery traffic and ICMP handling in one epoll-driven phase.
 
@@ -149,7 +149,7 @@ ICMP behavior in current code:
 
 When a passive or ICMP reply is received, the source IP is marked alive if it belongs to the current subnet and the host cap has not been reached.
 
-## TCP liveness phase
+## 🔌 TCP liveness phase
 
 TCP liveness is used after the initial sweep and after later expansion sweeps unless disabled with `--disable-tcp-liveness`.
 
@@ -161,7 +161,7 @@ The window size is:
 
 Targets already known alive are skipped.
 
-## Service discovery flow
+## 🧭 Service discovery flow
 
 After host discovery finishes, Scoutless builds a scan plan and runs:
 - TCP service discovery first
@@ -173,7 +173,7 @@ The local host is excluded from service scanning.
 
 Per-host timeout for service scans is derived from host discovery timing through `discovery_host_scan_timeout_ms()`.
 
-## Default built-in plan
+## 📋 Default built-in plan
 
 If no external plan is provided, Scoutless builds its service plan from the built-in probe arrays in `src/probes.c`.
 
@@ -221,7 +221,7 @@ Examples present in the current UDP list include ports for:
 
 The exact order is defined by `tcp_probes[]` and `udp_probes[]`.
 
-## External plan files
+## 🔗 External plan files
 
 `--plan <path>` loads a text plan file.
 
@@ -239,7 +239,7 @@ A loaded external plan replaces the default built-in plan for the protocols it p
 
 If a plan file is loaded but contains no ports, Scoutless reports `plan: missing ports` and falls back to no external plan.
 
-## Web probing and classification
+## 🌐 Web probing and classification
 
 Selected TCP ports can trigger additional HTTP/HTTPS probing.
 
@@ -259,7 +259,7 @@ The public-domain value used by TLS/public-host probing defaults to:
 It can be overridden with:
 - `--public-domain <name>`
 
-## CLI options currently implemented
+## 💻 CLI options currently implemented
 
 The current `scoutless.c` parses these options:
 - `--debug`
@@ -286,7 +286,7 @@ Current behavior of notable options:
 - explicit `--burst`, `--epoll`, and `--pacing` override the runtime defaults directly
 - `--debug-services-file` loads a service filter and also enables debug mode
 
-## Output format
+## 📤 Output format
 
 Final output is produced after service sorting.
 
@@ -306,7 +306,7 @@ Examples of formats produced by the current code:
 
 When web probing produces a service hint, that hint is printed instead of the default `/svc/<name>` suffix.
 
-## Android note
+## 📱 Android note
 
 This source tree contains no Android-specific API layer inside Scoutless itself.
 
@@ -314,7 +314,7 @@ The implementation here is still plain C using sockets and `epoll`.
 
 That does not imply identical behavior across all Android devices. It only means the scanner core in this tree does not contain a separate Android-only execution path in the documented files above.
 
-## Non-goals for this document
+## 🚫 Non-goals for this document
 
 This document intentionally does not claim:
 - OS fingerprinting
@@ -327,7 +327,7 @@ This document intentionally does not claim:
 Those claims would not be aligned with the current source base.
 
 
-## Real Behavior ⚠️
+## ⚠️  Real Behavior
 
 Scoutless does not rely on passive assumptions or protocol purity.
 
@@ -336,7 +336,7 @@ Scoutless does not rely on passive assumptions or protocol purity.
 - Host expansion is dynamic (new hosts generate new scan windows)
 - No blocking operations: everything is non-blocking and epoll-driven
 
-## Discovery Pipeline 🧩
+## 🧩 Discovery Pipeline
 
 1. Initial multicast + ICMP phase
 2. Host expansion via response-driven windows
@@ -346,14 +346,14 @@ Scoutless does not rely on passive assumptions or protocol purity.
 
 Each phase is constrained only by global pacing and epoll capacity.
 
-## Critical Design Constraints 🔬
+## 🔬 Critical Design Constraints
 
 - Global pacing is enforced across ALL protocols (ICMP, TCP, UDP)
 - No per-module rate control divergence allowed
 - Epoll loop must never be blocked by synchronous operations
 - UDP receive path must always be drained to avoid packet loss
 
-## Known Fragilities (Design Awareness) ⚠️
+## ⚠️  Known Fragilities (Design Awareness)
 
 - Incorrect pacing propagation can stall entire discovery
 - Blocking probe paths can break epoll fairness
