@@ -81,7 +81,7 @@ Compared to typical tunneling tools, Cloudless is built around explicit routing 
 
 ## 🎥 Architecture Deep Dive
 
-[![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://github.com/Cloudless-site/cloudless/raw/main/docs/video/cloudless.mp4)
+[![Cloudless Architecture Deep Dive](docs/img/cloudless.png)](https://github.com/Cloudless-site/cloudlessdocs/video/)
 
 *real internals · no slides · no fluff*
 
